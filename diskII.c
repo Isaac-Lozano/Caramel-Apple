@@ -324,6 +324,7 @@ uint8_t diskII_reference(void *vdisk, int address)
         case 0x06:
         case 0x07:
             _step_motor(disk, io_switch);
+            break;
 
 
         /* Motor control. */

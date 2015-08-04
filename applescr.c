@@ -802,6 +802,36 @@ void _awin_update_hires_line(AppleScr *awin, int y, uint8_t *lbuf)
                     }
                     SDL_RenderDrawPoint(awin->ren, x, y);
                 }
+                else if(prev && next)
+                {
+                    if(hbit)
+                    {
+                        if(!(x & 1))
+                        {
+                            /* Blue */
+                            SDL_SetRenderDrawColor(awin->ren, 0x00, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
+                        }
+                        else
+                        {
+                            /* Red */
+                            SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+                        }
+                    }
+                    else
+                    {
+                        if(!(x & 1))
+                        {
+                            /* Violet */
+                            SDL_SetRenderDrawColor(awin->ren, 0x80, 0x00, 0x80, SDL_ALPHA_OPAQUE);
+                        }
+                        else
+                        {
+                            /* Green */
+                            SDL_SetRenderDrawColor(awin->ren, 0x00, 0x80, 0x00, SDL_ALPHA_OPAQUE);
+                        }
+                    }
+                    SDL_RenderDrawPoint(awin->ren, x, y);
+                }
             }
             x++;
         }

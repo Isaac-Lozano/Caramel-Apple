@@ -1,5 +1,8 @@
 #include "apple_II.h"
 
+/* XXX FOR HACKS */
+#include "diskII.h"
+
 #include <SDL2/SDL.h>
 #include <stdio.h>
 
@@ -164,20 +167,36 @@ int apple_II_run(AppleII *apple)
                         case SDLK_RETURN:
                             apple->cpu.memory[0xC000] = '\r' | 0x80;
                             break;
+
                         case SDLK_BACKSPACE:
                         case SDLK_LEFT:
                             apple->cpu.memory[0xC000] = 0x08 | 0x80;
                             break;
+
                         case SDLK_RIGHT:
                             apple->cpu.memory[0xC000] = 0x15 | 0x80;
                             break;
+
                         case SDLK_F2:
                             printf("Resetting CPU\n");
                             cpu6502_reset(&apple->cpu);
                             break;
+
                         case SDLK_F3:
                             debug = 1;
                             break;
+
+                        /* XXX Hacky code to allow on-the-fly img loading */
+                        case SDLK_F4:
+                            {
+                                char filebuf[256];
+                                fgets(filebuf, 256, stdin);
+                                filebuf[strlen(filebuf)-1] = '\0';
+                                printf("\"%s\"\n", filebuf);
+                                FILE *img = fopen(filebuf, "r");
+                                AppleDiskII *disk = (AppleDiskII *) apple->cards[0x06].ctx;
+                                disk->drives[0].image = img;
+                            }
                     }
                     break;
 
