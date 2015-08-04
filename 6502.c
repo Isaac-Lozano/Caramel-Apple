@@ -22,6 +22,7 @@
 #define SET_CARRY(num) (cpu->ps.flags.c = (num) > 0xFF ? 1 : 0)
 #define SET_SUB_CARRY(num) (cpu->ps.flags.c = (unsigned int) (num) < 0x100 ? 1 : 0)
 
+extern int debug;
 
 /* These macros are defined for the different addressing modes of the CPU. */
 
@@ -242,7 +243,10 @@ uint8_t inline _read_byte(CPU_6502 *cpu, int address)
     }
 
 #if DEBUG
-    printf("Reading 0x%02X from 0x%04X\n", val, address);
+    if(debug)
+    {
+        printf("Reading 0x%02X from 0x%04X\n", val, address);
+    }
 #endif
 
     return val;
@@ -256,7 +260,10 @@ uint16_t inline _read_short(CPU_6502 *cpu, int address)
 void inline _write_byte(CPU_6502 *cpu, int address, uint8_t val)
 {
 #if DEBUG
-    printf("Writing 0x%02x to 0x%04x\n", val, address);
+    if(debug)
+    {
+        printf("Writing 0x%02x to 0x%04x\n", val, address);
+    }
 #endif
 
     /* Check if callback exsists for this page.
@@ -264,7 +271,7 @@ void inline _write_byte(CPU_6502 *cpu, int address, uint8_t val)
      */
     if(cpu->write_callbacks[address >> 8].callback)
     {
-        cpu->write_callbacks[address >> 8].callback(cpu, cpu->read_callbacks[address >> 8].ctx, address, val);
+        cpu->write_callbacks[address >> 8].callback(cpu, cpu->write_callbacks[address >> 8].ctx, address, val);
         return;
     }
 
@@ -283,7 +290,10 @@ int cpu6502_excecute_opcode(CPU_6502 *cpu)
     uint8_t op = _read_byte(cpu, cpu->pc);
     cpu->pc += 1;
 #if DEBUG
-    printf("OP: 0x%02x\n", op);
+    if(debug)
+    {
+        printf("OP: 0x%02x\n", op);
+    }
 #endif
 
     int src;
@@ -2256,7 +2266,7 @@ int cpu6502_excecute_opcode(CPU_6502 *cpu)
             {
 #if DEBUG
 #endif
-                printf("BAD OP 0x%02x\n", op);
+                printf("BAD OP 0x%02x at 0x%04X\n", op, cpu->pc);
                 getchar();
                 cycles += 1;
             }
@@ -2288,7 +2298,10 @@ int cpu6502_run(CPU_6502 *cpu, int cycles)
         }
         passed += cpu6502_excecute_opcode(cpu);
 #if DEBUG
-        cpu6502_print_status(cpu);
+        if(debug)
+        {
+            cpu6502_print_status(cpu);
+        }
 #endif
     }
     return passed;
@@ -2322,12 +2335,8 @@ int cpu6502_add_read_memory_map(CPU_6502 *cpu, void *ctx, cpu6502_read_func call
         return 1;
     }
 
-    /* Note to self, stop coding after 1:00 AM */
-    cpu6502_ReadMMap this_should_be_obvious;
-    this_should_be_obvious.ctx = ctx;
-    this_should_be_obvious.callback = callback;
-
-    cpu->read_callbacks[page] = this_should_be_obvious;
+    cpu->read_callbacks[page].ctx = ctx;
+    cpu->read_callbacks[page].callback = callback;
 
     return 0;
 }
@@ -2339,12 +2348,8 @@ int cpu6502_add_write_memory_map(CPU_6502 *cpu, void *ctx, cpu6502_write_func ca
         return 1;
     }
 
-    /* Note to self, stop coding after 1:00 AM */
-    cpu6502_WriteMMap this_should_be_obvious;
-    this_should_be_obvious.ctx = ctx;
-    this_should_be_obvious.callback = callback;
-
-    cpu->write_callbacks[page] = this_should_be_obvious;
+    cpu->write_callbacks[page].ctx = ctx;
+    cpu->write_callbacks[page].callback = callback;
 
     return 0;
 }

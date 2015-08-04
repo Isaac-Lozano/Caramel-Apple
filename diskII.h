@@ -3,6 +3,8 @@
 
 #include <inttypes.h>
 
+#include "apple_II.h"
+
 typedef struct _apple_drive
 {
     /* Current sector and track */
@@ -27,6 +29,8 @@ typedef struct _apple_drive
 
 typedef struct _apple_disk_II
 {
+    AppleII *parent;
+
     AppleDrive drives[2];
 
     uint8_t write_reg;
@@ -40,6 +44,8 @@ typedef struct _apple_disk_II
     int write_prot;
 } AppleDiskII;
 
-uint8_t diskII_reference(AppleDiskII *disk, int address, int val);
+uint8_t diskII_reference(void *vdisk, int address);
+uint8_t diskII_prom(CPU_6502 *cpu, void *ctx, int addr);
+int diskII_init(AppleDiskII *disk, AppleII *parent, FILE *d1, FILE *d2);
 
 #endif /* __DISKII_H__ */

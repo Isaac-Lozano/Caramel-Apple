@@ -746,71 +746,222 @@ void _create_surfaces(AppleScr *awin)
     }
 }
 
+void _awin_update_hires_line(AppleScr *awin, int y, uint8_t *lbuf)
+{
+    int byt, bit, x = 0, prev = 0, curr = 0, next = 0;
+
+    for(byt = 0; byt < 40; byt++)
+    {
+        int data = lbuf[byt];
+        int hbit = data & 0x80;
+
+        for(bit = 0; bit < 7; bit++)
+        {
+            prev = curr;
+            curr = next;
+            next = data & 0x01;
+
+            data >>= 1;
+
+            if(x == 0)
+            {
+            }
+            else
+            {
+                if(curr)
+                {
+                    if(prev || next)
+                    {
+                        SDL_SetRenderDrawColor(awin->ren, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE);
+                    }
+                    else if(hbit)
+                    {
+                        if(x & 1)
+                        {
+                            /* Blue */
+                            SDL_SetRenderDrawColor(awin->ren, 0x00, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
+                        }
+                        else
+                        {
+                            /* Red */
+                            SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+                        }
+                    }
+                    else
+                    {
+                        if(x & 1)
+                        {
+                            /* Violet */
+                            SDL_SetRenderDrawColor(awin->ren, 0x80, 0x00, 0x80, SDL_ALPHA_OPAQUE);
+                        }
+                        else
+                        {
+                            /* Green */
+                            SDL_SetRenderDrawColor(awin->ren, 0x00, 0x80, 0x00, SDL_ALPHA_OPAQUE);
+                        }
+                    }
+                    SDL_RenderDrawPoint(awin->ren, x, y);
+                }
+            }
+            x++;
+        }
+    }
+}
+
 void _awin_update_hires(AppleScr *awin, uint8_t *gbuf)
 {
-    int pass, mpass, byt, i, ind = 0;
+    int scan;
+
+    /* Translates scan to physical line on the monitor */
+    int translate[] = {0, 8, 16, 24, 32, 40, 48, 56, 1, 9, 17, 25, 33, 41, 49, 57, 2, 10, 18, 26, 34, 42, 50, 58, 3, 11, 19, 27, 35, 43, 51, 59, 4, 12, 20, 28, 36, 44, 52, 60, 5, 13, 21, 29, 37, 45, 53, 61, 6, 14, 22, 30, 38, 46, 54, 62, 7, 15, 23, 31, 39, 47, 55, 63};
 
     SDL_SetRenderDrawColor(awin->ren, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(awin->ren);
-    SDL_SetRenderDrawColor(awin->ren, 255, 255, 255, SDL_ALPHA_OPAQUE);
 
-    for(mpass = 0; mpass < 8; mpass++) /* Minor pass */
+    for(scan = 0; scan < 64 /* TODO: MACRO */; scan++)
     {
-        for(pass = 0; pass < 8; pass++) /* Major pass */
-        {
-            int x = 0;
-            ind = (pass * 0x80) + (mpass * 0x400);
-            for(byt = 0; byt < 40; byt++)
-            {
-                int y = pass * 8 + mpass;
-                uint8_t b = gbuf[ind++];
-
-                for(i = 0; i < 7; i++)
-                {
-                    if(b & 1)
-                    {
-                        SDL_RenderDrawPoint(awin->ren, x, y);
-                    }
-                    b >>= 1;
-                    x++;
-                }
-            }
-            x = 0;
-            for(byt = 0; byt < 40; byt++)
-            {
-                int y = pass * 8 + mpass + 64;
-                uint8_t b = gbuf[ind++];
-
-                for(i = 0; i < 7; i++)
-                {
-                    if(b & 1)
-                    {
-                        SDL_RenderDrawPoint(awin->ren, x, y);
-                    }
-                    b >>= 1;
-                    x++;
-                }
-            }
-            x = 0;
-            for(byt = 0; byt < 40; byt++)
-            {
-                int y = pass * 8 + mpass + 128;
-                uint8_t b = gbuf[ind++];
-
-                for(i = 0; i < 7; i++)
-                {
-                    if(b & 1)
-                    {
-                        SDL_RenderDrawPoint(awin->ren, x, y);
-                    }
-                    b >>= 1;
-                    x++;
-                }
-            }
-        }
+        _awin_update_hires_line(awin, translate[scan], gbuf + (0x80 * scan));
+        _awin_update_hires_line(awin, translate[scan] + 64, gbuf + (0x80 * scan) + 0x28);
+        _awin_update_hires_line(awin, translate[scan] + 128, gbuf + (0x80 * scan) + 0x50);
     }
+
     SDL_RenderPresent(awin->ren);
 }
+
+//void _awin_update_hires(AppleScr *awin, uint8_t *gbuf)
+//{
+//    int pass, mpass, byt, i, ind = 0;
+//
+//    SDL_SetRenderDrawColor(awin->ren, 0, 0, 0, SDL_ALPHA_OPAQUE);
+//    SDL_RenderClear(awin->ren);
+//    SDL_SetRenderDrawColor(awin->ren, 255, 255, 255, SDL_ALPHA_OPAQUE);
+//
+//    for(mpass = 0; mpass < 8; mpass++) /* Minor pass */
+//    {
+//        for(pass = 0; pass < 8; pass++) /* Major pass */
+//        {
+//            int x = 0;
+//            ind = (pass * 0x80) + (mpass * 0x400);
+//            for(byt = 0; byt < 40; byt++)
+//            {
+//                int y = pass * 8 + mpass;
+//                uint8_t b = gbuf[ind++];
+//                int other_colors = b & 0x80;
+//
+//                for(i = 0; i < 7; i++)
+//                {
+//                    if(b & 1)
+//                    {
+//                        if(other_colors)
+//                        {
+//                            if(x & 1)
+//                            {
+//                                SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+//                            }
+//                            else
+//                            {
+//                                SDL_SetRenderDrawColor(awin->ren, 0x00, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
+//                            }
+//                        }
+//                        else
+//                        {
+//                            if(x & 1)
+//                            {
+//                                SDL_SetRenderDrawColor(awin->ren, 0x00, 0x80, 0x00, SDL_ALPHA_OPAQUE);
+//                            }
+//                            else
+//                            {
+//                                SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
+//                            }
+//                        }
+//                        SDL_RenderDrawPoint(awin->ren, x, y);
+//                    }
+//                    b >>= 1;
+//                    x++;
+//                }
+//            }
+//            x = 0;
+//            for(byt = 0; byt < 40; byt++)
+//            {
+//                int y = pass * 8 + mpass + 64;
+//                uint8_t b = gbuf[ind++];
+//                int other_colors = b & 0x80;
+//
+//                for(i = 0; i < 7; i++)
+//                {
+//                    if(b & 1)
+//                    {
+//                        if(other_colors)
+//                        {
+//                            if(x & 1)
+//                            {
+//                                SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+//                            }
+//                            else
+//                            {
+//                                SDL_SetRenderDrawColor(awin->ren, 0x00, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
+//                            }
+//                        }
+//                        else
+//                        {
+//                            if(x & 1)
+//                            {
+//                                SDL_SetRenderDrawColor(awin->ren, 0x00, 0x80, 0x00, SDL_ALPHA_OPAQUE);
+//                            }
+//                            else
+//                            {
+//                                SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
+//                            }
+//                        }
+//                        SDL_RenderDrawPoint(awin->ren, x, y);
+//                    }
+//                    b >>= 1;
+//                    x++;
+//                }
+//            }
+//            x = 0;
+//            for(byt = 0; byt < 40; byt++)
+//            {
+//                int y = pass * 8 + mpass + 128;
+//                uint8_t b = gbuf[ind++];
+//                int other_colors = b & 0x80;
+//
+//                for(i = 0; i < 7; i++)
+//                {
+//                    if(b & 1)
+//                    {
+//                        if(other_colors)
+//                        {
+//                            if(x & 1)
+//                            {
+//                                SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+//                            }
+//                            else
+//                            {
+//                                SDL_SetRenderDrawColor(awin->ren, 0x00, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
+//                            }
+//                        }
+//                        else
+//                        {
+//                            if(x & 1)
+//                            {
+//                                SDL_SetRenderDrawColor(awin->ren, 0x00, 0x80, 0x00, SDL_ALPHA_OPAQUE);
+//                            }
+//                            else
+//                            {
+//                                SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
+//                            }
+//                        }
+//                        SDL_RenderDrawPoint(awin->ren, x, y);
+//                    }
+//                    b >>= 1;
+//                    x++;
+//                }
+//            }
+//        }
+//    }
+//    SDL_RenderPresent(awin->ren);
+//}
 
 void _awin_update_text(AppleScr *awin, uint8_t *tbuf)
 {

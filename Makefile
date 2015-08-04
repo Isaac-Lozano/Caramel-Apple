@@ -1,7 +1,7 @@
 CC = gcc
-CFLAGS = -c -Wall -g -O3
+CFLAGS = -c -Wall -g -DDEBUG
 LDFLAGS = -lSDL2
-SOURCES = 6502.c appleII.c applescr.c diskII.c
+SOURCES = 6502.c apple_II.c applescr.c diskII.c language.c main.c
 OBJECTS = $(SOURCES:.c=.o)
 EXECUTABLE = appleII
 

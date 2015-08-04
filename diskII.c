@@ -6,13 +6,18 @@
 #define NIB_EVEN(x) ((x) | 0xAA)
 
 
+/**********************************************
+ * The tables below were taken from skrenta's *
+ * Apple II emulator in C.                    *
+ **********************************************/
+
 /* The rom for the Disk2.
  * It will be "copied" into
  * the Apple II's memory.
  * Taken from Apple Win.
  */
 
-const char disk2_rom[] =
+char disk2_rom[] =
                 "\xA2\x20\xA0\x00\xA2\x03\x86\x3C\x8A\x0A\x24\x3C\xF0\x10\x05\x3C"
                 "\x49\xFF\x29\x7E\xB0\x08\x4A\xD0\xFB\x98\x9D\x56\x03\xC8\xE8\x10"
                 "\xE5\x20\x58\xFF\xBA\xBD\x00\x01\x0A\x0A\x0A\x0A\x85\x2B\xAA\xBD"
@@ -30,11 +35,6 @@ const char disk2_rom[] =
                 "\x03\x2A\x5E\x00\x03\x2A\x91\x26\xC8\xD0\xEE\xE6\x27\xE6\x3D\xA5"
                 "\x3D\xCD\x00\x08\xA6\x2B\x90\xDB\x4C\x01\x08\x00\x00\x00\x00\x00"
                 ;
-
-/**********************************************
- * The tables below were taken from skrenta's *
- * Apple II emulator in C.                    *
- **********************************************/
 
 /*  Helps with the bit fiddling necessary to extract the bottom
  *  two bits during the 256 - 342 byte nibblize.
@@ -307,8 +307,10 @@ void _setup_sector(AppleDrive *drive)
     drive->index = drive->sect_buf;
 }
 
-uint8_t diskII_reference(AppleDiskII *disk, int address, int val)
+uint8_t diskII_reference(void *vdisk, int address)
 {
+    AppleDiskII *disk = (AppleDiskII *) vdisk;
+
     int io_switch = address & 0x0F;
     switch(io_switch)
     {
@@ -373,9 +375,12 @@ uint8_t diskII_reference(AppleDiskII *disk, int address, int val)
             break;
 
         case 0x0D: /* Load data registar */
-            printf("loading 0x%02X to data register\n", val);
-            disk->write_reg = val;
-            break;
+            {
+                uint8_t val = disk->parent->cpu.memory[address];
+                printf("loading 0x%02X to data register\n", val);
+                disk->write_reg = val;
+                break;
+            }
 
         case 0x0E: /* Read mode */
             printf("Read Mode\n");
@@ -391,6 +396,27 @@ uint8_t diskII_reference(AppleDiskII *disk, int address, int val)
             disk->mode = DISK_II_MODE_WRITE;
             break;
     }
+
+    return 0;
+}
+
+uint8_t diskII_prom(CPU_6502 *cpu, void *ctx, int addr)
+{
+    return (uint8_t) disk2_rom[addr & 0xFF];
+}
+
+int diskII_init(AppleDiskII *disk, AppleII *parent, FILE *d1, FILE *d2)
+{
+    memset(disk, 0, sizeof(AppleDiskII));
+    disk->parent = parent;
+    disk->drives[0].image = d1;
+    disk->drives[1].image = d2;
+
+    /* XXX ROM HACK */
+    /* This removes some "ugly" delay functions */
+    disk2_rom[0x4C] = 0xA9;
+    disk2_rom[0x4D] = 0x00;
+    disk2_rom[0x4E] = 0xEA;
 
     return 0;
 }
