@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 
     LanguageCard card;
 
-    language_init(&card, &apple, rom_buf);
+    language_init(&card, &apple);
     apple_II_add_card(&apple, &card, 0, language_io_switch, NULL);
 
     apple_II_run(&apple);

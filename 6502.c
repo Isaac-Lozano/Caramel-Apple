@@ -263,6 +263,10 @@ void inline _write_byte(CPU_6502 *cpu, int address, uint8_t val)
     if(debug)
     {
         printf("Writing 0x%02x to 0x%04x\n", val, address);
+        if((address > 0x2000 && address < 0x3000) || val == 0x02)
+        {
+            getchar();
+        }
     }
 #endif
 

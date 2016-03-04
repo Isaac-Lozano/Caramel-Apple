@@ -779,12 +779,12 @@ void _awin_update_hires_line(AppleScr *awin, int y, uint8_t *lbuf)
                         if(x & 1)
                         {
                             /* Blue */
-                            SDL_SetRenderDrawColor(awin->ren, 0x00, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
+                            SDL_SetRenderDrawColor(awin->ren, 0x00, 0x80, 0xFF, SDL_ALPHA_OPAQUE);
                         }
                         else
                         {
                             /* Red */
-                            SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+                            SDL_SetRenderDrawColor(awin->ren, 0xF0, 0x50, 0x00, SDL_ALPHA_OPAQUE);
                         }
                     }
                     else
@@ -792,12 +792,12 @@ void _awin_update_hires_line(AppleScr *awin, int y, uint8_t *lbuf)
                         if(x & 1)
                         {
                             /* Violet */
-                            SDL_SetRenderDrawColor(awin->ren, 0x80, 0x00, 0x80, SDL_ALPHA_OPAQUE);
+                            SDL_SetRenderDrawColor(awin->ren, 0xA0, 0x00, 0xFF, SDL_ALPHA_OPAQUE);
                         }
                         else
                         {
                             /* Green */
-                            SDL_SetRenderDrawColor(awin->ren, 0x00, 0x80, 0x00, SDL_ALPHA_OPAQUE);
+                            SDL_SetRenderDrawColor(awin->ren, 0x20, 0xC0, 0x00, SDL_ALPHA_OPAQUE);
                         }
                     }
                     SDL_RenderDrawPoint(awin->ren, x, y);
@@ -809,12 +809,12 @@ void _awin_update_hires_line(AppleScr *awin, int y, uint8_t *lbuf)
                         if(!(x & 1))
                         {
                             /* Blue */
-                            SDL_SetRenderDrawColor(awin->ren, 0x00, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
+                            SDL_SetRenderDrawColor(awin->ren, 0x00, 0x80, 0xFF, SDL_ALPHA_OPAQUE);
                         }
                         else
                         {
                             /* Red */
-                            SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+                            SDL_SetRenderDrawColor(awin->ren, 0xF0, 0x50, 0x00, SDL_ALPHA_OPAQUE);
                         }
                     }
                     else
@@ -822,12 +822,12 @@ void _awin_update_hires_line(AppleScr *awin, int y, uint8_t *lbuf)
                         if(!(x & 1))
                         {
                             /* Violet */
-                            SDL_SetRenderDrawColor(awin->ren, 0x80, 0x00, 0x80, SDL_ALPHA_OPAQUE);
+                            SDL_SetRenderDrawColor(awin->ren, 0xA0, 0x00, 0xFF, SDL_ALPHA_OPAQUE);
                         }
                         else
                         {
                             /* Green */
-                            SDL_SetRenderDrawColor(awin->ren, 0x00, 0x80, 0x00, SDL_ALPHA_OPAQUE);
+                            SDL_SetRenderDrawColor(awin->ren, 0x20, 0xC0, 0x00, SDL_ALPHA_OPAQUE);
                         }
                     }
                     SDL_RenderDrawPoint(awin->ren, x, y);
@@ -854,144 +854,65 @@ void _awin_update_hires(AppleScr *awin, uint8_t *gbuf)
         _awin_update_hires_line(awin, translate[scan] + 64, gbuf + (0x80 * scan) + 0x28);
         _awin_update_hires_line(awin, translate[scan] + 128, gbuf + (0x80 * scan) + 0x50);
     }
-
-    SDL_RenderPresent(awin->ren);
 }
 
-//void _awin_update_hires(AppleScr *awin, uint8_t *gbuf)
-//{
-//    int pass, mpass, byt, i, ind = 0;
-//
-//    SDL_SetRenderDrawColor(awin->ren, 0, 0, 0, SDL_ALPHA_OPAQUE);
-//    SDL_RenderClear(awin->ren);
-//    SDL_SetRenderDrawColor(awin->ren, 255, 255, 255, SDL_ALPHA_OPAQUE);
-//
-//    for(mpass = 0; mpass < 8; mpass++) /* Minor pass */
-//    {
-//        for(pass = 0; pass < 8; pass++) /* Major pass */
-//        {
-//            int x = 0;
-//            ind = (pass * 0x80) + (mpass * 0x400);
-//            for(byt = 0; byt < 40; byt++)
-//            {
-//                int y = pass * 8 + mpass;
-//                uint8_t b = gbuf[ind++];
-//                int other_colors = b & 0x80;
-//
-//                for(i = 0; i < 7; i++)
-//                {
-//                    if(b & 1)
-//                    {
-//                        if(other_colors)
-//                        {
-//                            if(x & 1)
-//                            {
-//                                SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0x00, SDL_ALPHA_OPAQUE);
-//                            }
-//                            else
-//                            {
-//                                SDL_SetRenderDrawColor(awin->ren, 0x00, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
-//                            }
-//                        }
-//                        else
-//                        {
-//                            if(x & 1)
-//                            {
-//                                SDL_SetRenderDrawColor(awin->ren, 0x00, 0x80, 0x00, SDL_ALPHA_OPAQUE);
-//                            }
-//                            else
-//                            {
-//                                SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
-//                            }
-//                        }
-//                        SDL_RenderDrawPoint(awin->ren, x, y);
-//                    }
-//                    b >>= 1;
-//                    x++;
-//                }
-//            }
-//            x = 0;
-//            for(byt = 0; byt < 40; byt++)
-//            {
-//                int y = pass * 8 + mpass + 64;
-//                uint8_t b = gbuf[ind++];
-//                int other_colors = b & 0x80;
-//
-//                for(i = 0; i < 7; i++)
-//                {
-//                    if(b & 1)
-//                    {
-//                        if(other_colors)
-//                        {
-//                            if(x & 1)
-//                            {
-//                                SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0x00, SDL_ALPHA_OPAQUE);
-//                            }
-//                            else
-//                            {
-//                                SDL_SetRenderDrawColor(awin->ren, 0x00, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
-//                            }
-//                        }
-//                        else
-//                        {
-//                            if(x & 1)
-//                            {
-//                                SDL_SetRenderDrawColor(awin->ren, 0x00, 0x80, 0x00, SDL_ALPHA_OPAQUE);
-//                            }
-//                            else
-//                            {
-//                                SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
-//                            }
-//                        }
-//                        SDL_RenderDrawPoint(awin->ren, x, y);
-//                    }
-//                    b >>= 1;
-//                    x++;
-//                }
-//            }
-//            x = 0;
-//            for(byt = 0; byt < 40; byt++)
-//            {
-//                int y = pass * 8 + mpass + 128;
-//                uint8_t b = gbuf[ind++];
-//                int other_colors = b & 0x80;
-//
-//                for(i = 0; i < 7; i++)
-//                {
-//                    if(b & 1)
-//                    {
-//                        if(other_colors)
-//                        {
-//                            if(x & 1)
-//                            {
-//                                SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0x00, SDL_ALPHA_OPAQUE);
-//                            }
-//                            else
-//                            {
-//                                SDL_SetRenderDrawColor(awin->ren, 0x00, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
-//                            }
-//                        }
-//                        else
-//                        {
-//                            if(x & 1)
-//                            {
-//                                SDL_SetRenderDrawColor(awin->ren, 0x00, 0x80, 0x00, SDL_ALPHA_OPAQUE);
-//                            }
-//                            else
-//                            {
-//                                SDL_SetRenderDrawColor(awin->ren, 0xD0, 0x00, 0xD0, SDL_ALPHA_OPAQUE);
-//                            }
-//                        }
-//                        SDL_RenderDrawPoint(awin->ren, x, y);
-//                    }
-//                    b >>= 1;
-//                    x++;
-//                }
-//            }
-//        }
-//    }
-//    SDL_RenderPresent(awin->ren);
-//}
+void _awin_update_lores_line(AppleScr *awin, int y, uint8_t *lbuf)
+{
+    int x;
+    int colors[][3] = {{0x00,0x00,0x00},
+                       {0xD0,0x00,0x30},
+                       {0x00,0x00,0x80},
+                       {0xFF,0x00,0xFF},
+                       {0x00,0x80,0x00},
+                       {0x80,0x80,0x80},
+                       {0x00,0x00,0xFF},
+                       {0x60,0xA0,0xFF},
+                       {0x80,0x50,0x00},
+                       {0xFF,0x80,0x00},
+                       {0xC0,0xC0,0xC0},
+                       {0xFF,0x90,0x80},
+                       {0x00,0xFF,0x00},
+                       {0xFF,0xFF,0x00},
+                       {0x40,0xFF,0x90},
+                       {0xFF,0xFF,0xFF}};
+
+    for(x = 0; x < APPLE_SCR_TEXT_WIDTH; x++)
+    {
+        int *pixel_color = colors[lbuf[x] & 0x0F];
+        SDL_Rect target;
+        target.x = x * 7;
+        target.y = y * 8;
+        target.w = 7;
+        target.h = 4;
+
+        SDL_SetRenderDrawColor(awin->ren, pixel_color[0], pixel_color[1], pixel_color[2], SDL_ALPHA_OPAQUE);
+        SDL_RenderFillRect(awin->ren, &target);
+
+        pixel_color = colors[lbuf[x] >> 4];
+        target.x = x * 7;
+        target.y = y * 8 + 4;
+        target.w = 7;
+        target.h = 4;
+
+        SDL_SetRenderDrawColor(awin->ren, pixel_color[0], pixel_color[1], pixel_color[2], SDL_ALPHA_OPAQUE);
+        SDL_RenderFillRect(awin->ren, &target);
+    }
+}
+
+void _awin_update_lowres(AppleScr *awin, uint8_t *gbuf)
+{
+    int scan;
+
+    SDL_SetRenderDrawColor(awin->ren, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(awin->ren);
+
+    for(scan = 0; scan < 8 /* TODO: MACRO */; scan++)
+    {
+        _awin_update_lores_line(awin, scan, gbuf + (0x80 * scan));
+        _awin_update_lores_line(awin, scan + 8, gbuf + (0x80 * scan) + 0x28);
+        _awin_update_lores_line(awin, scan + 16, gbuf + (0x80 * scan) + 0x50);
+    }
+}
 
 void _awin_update_text(AppleScr *awin, uint8_t *tbuf)
 {
@@ -1044,25 +965,54 @@ void _awin_update_text(AppleScr *awin, uint8_t *tbuf)
                 x = 0;
                 y += 8;
             }
-
-//            memcpy(chr, charmap[tbuf[ind++] % 64], sizeof(uint8_t) * 8);
-//
-//            /* TODO: Maybe unroll a bit? */
-//            /* TODO: Remove magic numbers */
-//            for(row = 0; row < 8; row++)
-//            {
-//                for(col = 0; col < 7; col++) /* col 0 == 0x01 */
-//                {
-//                    if((chr[row] >> col) & 0x01)
-//                    {
-//                        SDL_RenderDrawPoint(awin->ren, ch_x + (7 - col - 1), ch_y + row);
-//                    }
-//                }
-//            }
         }
     }
+}
 
-    SDL_RenderPresent(awin->ren);
+void _awin_update_draw_mixed(AppleScr *awin, uint8_t *tbuf)
+{
+    int x, y;
+    /* Translates line to offset */
+    int translate[] = {0x250, 0x2D0, 0x350, 0x3D0};
+
+    for(y = 0; y < 4; y++)
+    {
+        uint8_t *lbuf = &tbuf[translate[y]];
+
+        for(x = 0; x < APPLE_SCR_TEXT_WIDTH; x++)
+        {
+            SDL_Texture *char_tex;
+            uint8_t char_code = lbuf[x];
+
+            SDL_Rect target;
+            target.x = x * APPLE_SCR_CHAR_WIDTH;
+            target.y = (y + 20) * APPLE_SCR_CHAR_HEIGHT;
+            target.w = APPLE_SCR_CHAR_WIDTH;
+            target.h = APPLE_SCR_CHAR_HEIGHT;
+
+            if(char_code >> 6 == 0) /* INVERSE -- if 0x00 <= charcode < 0x40 */
+            {
+                char_tex = charmap_inverse_textures[char_code % 64];
+            }
+            else if(char_code >> 6 == 1) /* FLASHING -- if 0x40 <= charcode < 0x80 */
+            {
+                if((SDL_GetTicks() >> 9) % 2)
+                {
+                    char_tex = charmap_inverse_textures[char_code % 64];
+                }
+                else
+                {
+                    char_tex = charmap_textures[char_code % 64];
+                }
+            }
+            else /* Normal */
+            {
+                char_tex = charmap_textures[char_code % 64];
+            }
+
+            SDL_RenderCopy(awin->ren, char_tex, NULL, &target);
+        }
+    }
 }
 
 int apple_scr_init(AppleScr *awin, uint8_t *text_buffer, uint8_t *graphics_buffer)
@@ -1083,12 +1033,16 @@ int apple_scr_init(AppleScr *awin, uint8_t *text_buffer, uint8_t *graphics_buffe
         return 1;
     }
 
-    SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+    SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
     if(ren == NULL)
     {
         printf("5\n");
         return 1;
     }
+
+    awin->vbuf = SDL_CreateTexture(ren, SDL_GetWindowPixelFormat(win), SDL_TEXTUREACCESS_TARGET, APPLE_SCR_WIDTH, APPLE_SCR_HEIGHT);
+
+    SDL_SetRenderTarget(ren, awin->vbuf);
 
     awin->win = win;
     awin->ren = ren;
@@ -1124,12 +1078,17 @@ void apple_scr_redraw(AppleScr *awin)
         {
             if(awin->display_flags & APPLE_SCR_MODE_SECONDARY)
             {
-                //_awin_update_lowres(awin, awin->graphics_buffer + 0x400);
+                _awin_update_lowres(awin, awin->text_buffer + 0x400);
             }
             else /* Primary screen */
             {
-                //_awin_update_lowres(awin, awin->graphics_buffer);
+                _awin_update_lowres(awin, awin->text_buffer);
             }
+        }
+
+        if(awin->display_flags & APPLE_SCR_MODE_MIXED)
+        {
+            _awin_update_draw_mixed(awin, awin->text_buffer);
         }
     }
     else /* Text mode */
@@ -1143,116 +1102,24 @@ void apple_scr_redraw(AppleScr *awin)
             _awin_update_text(awin, awin->text_buffer);
         }
     }
-}
 
-//int pwin_init(struct pixel_window *pwin, int w, int h, char *buf)
-//{
-//    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) /* I am ashamed of this line of code. */
+    SDL_RenderPresent(awin->ren);
+
+    SDL_SetRenderTarget(awin->ren, NULL);
+
+//    if(resize)
 //    {
-//        return 1;
+        SDL_Rect win_size;
+
+        win_size.x = 0;
+        win_size.y = 0;
+
+        SDL_GetWindowSize(awin->win, &win_size.w, &win_size.h);
 //    }
-//
-//    SDL_Window *win = SDL_CreateWindow("Pixel Window", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
-//    if(win == NULL)
-//    {
-//        return 2;
-//    }
-//
-//    SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-//    if(ren == NULL)
-//    {
-//        return 3;
-//    }
-//
-//    pwin->win = win;
-//    pwin->ren = ren;
-//    pwin->buf = buf;
-//    pwin->w = w;
-//    pwin->h = h;
-//    pwin->x = 0;
-//    pwin->y = 0;
-//
-//    SDL_AddEventWatch(&_pwin_event_callback, pwin);
-//
-//    _pwin_draw_image(pwin);
-//    return 0;
-//}
-//
-//int _pwin_event_callback(void *void_pwin, SDL_Event *e)
-//{
-//    struct pixel_window *pwin = (struct pixel_window *) void_pwin;
-//    char *last_char, temp;
-//
-//    if(e->type == SDL_KEYDOWN)
-//    {
-//        last_char = &pwin->buf[(pwin->y * pwin->w) + pwin->x];
-//        switch(e->key.keysym.sym)
-//        {
-//            case SDLK_UP:
-//                pwin->y--;
-//                if(pwin->y < 0) pwin->y += pwin->h;
-//                break;
-//            case SDLK_DOWN:
-//                pwin->y++;
-//                pwin->y %= pwin->h;
-//                break;
-//            case SDLK_LEFT:
-//                pwin->x--;
-//                if(pwin->x < 0) pwin->x += pwin->w;
-//                break;
-//            case SDLK_RIGHT:
-//                pwin->x++;
-//                pwin->x %= pwin->w;
-//                break;
-//            case SDLK_ESCAPE:
-//                pwin_close(pwin);
-//                return 0;
-//        }
-//
-//        temp = pwin->buf[(pwin->y * pwin->w) + pwin->x];
-//        pwin->buf[(pwin->y * pwin->w) + pwin->x] = *last_char;
-//        *last_char = temp;
-//
-//
-//        _pwin_draw_image(pwin);
-//    }
-//}
-//
-//void _pwin_draw_image(struct pixel_window *pwin)
-//{
-//    int s_width, s_height, x, y;
-//
-//    SDL_GetWindowSize(pwin->win, &s_width, &s_height);
-//    SDL_RenderClear(pwin->ren);
-//
-//    SDL_Rect pixel = {0, 0, s_width / pwin->w, s_height / pwin->h};
-//
-//    for(y = 0; y < pwin->h; y++)
-//    {
-//        for(x = 0; x < pwin->w; x++)
-//        {
-//            SDL_SetRenderDrawColor(pwin->ren, GET_RED(pwin->buf[(y * pwin->w) + x]),
-//                                           GET_GREEN(pwin->buf[(y * pwin->w) + x]),
-//                                           GET_BLUE(pwin->buf[(y * pwin->w) + x]),
-//                                           0xFF);
-//            SDL_RenderFillRect(pwin->ren, &pixel);
-//            pixel.x += s_width / pwin->w;
-//        }
-//        pixel.x = 0;
-//        pixel.y += s_height / pwin->h;
-//    }
-//
-//    SDL_RenderPresent(pwin->ren);
-//}
-//
-//void pwin_wait(int len)
-//{
-//    SDL_Delay(len);
-//}
-//
-//void pwin_close(struct pixel_window *pwin)
-//{
-//    SDL_DestroyRenderer(pwin->ren);
-//    SDL_DestroyWindow(pwin->win);
-//    SDL_Quit();
-//}
+
+    SDL_RenderSetLogicalSize(awin->ren, win_size.w, win_size.h);
+    SDL_RenderCopy(awin->ren, awin->vbuf, NULL, &win_size);
+    SDL_RenderPresent(awin->ren);
+
+    SDL_SetRenderTarget(awin->ren, awin->vbuf);
+}

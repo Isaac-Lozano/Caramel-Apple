@@ -8,7 +8,7 @@
 
 int debug = 0;
 
-uint8_t _io_read_callback(CPU_6502 *cpu, void *ctx, int addr)
+uint8_t _io_write_callback(CPU_6502 *cpu, void *ctx, int addr, uint8_t val)
 {
     AppleII *apple = (AppleII *) ctx;
 
@@ -18,7 +18,7 @@ uint8_t _io_read_callback(CPU_6502 *cpu, void *ctx, int addr)
         /* Memory map for card io switches */
         if(apple->cards[semi_page - 0xC08].callback) 
         {
-            return apple->cards[semi_page - 0xC08].callback(apple->cards[semi_page - 0xC08].ctx, addr);
+            return apple->cards[semi_page - 0xC08].callback(apple->cards[semi_page - 0xC08].ctx, addr, val);
         }
     }
     else
@@ -80,26 +80,25 @@ uint8_t _io_read_callback(CPU_6502 *cpu, void *ctx, int addr)
     return cpu->memory[addr];
 }
 
-uint8_t _io_write_callback(CPU_6502 *cpu, void *ctx, int addr, uint8_t val)
+uint8_t _io_read_callback(CPU_6502 *cpu, void *ctx, int addr)
 {
-    AppleII *apple = (AppleII *) ctx;
-
-    int semi_page = addr >> 4;
-    if(semi_page >= 0xC08)
-    {
-        /* Memory map for card io switches */
-        if(apple->cards[semi_page - 0xC08].callback) 
-        {
-            return apple->cards[semi_page - 0xC08].callback(apple->cards[semi_page - 0xC08].ctx, addr);
-        }
-    }
-
-    if(addr == 0xc010)
-    {
-        cpu->memory[0xC000] &= 0x7F;
-    }
-
-    return 0;
+//    AppleII *apple = (AppleII *) ctx;
+//
+//    int semi_page = addr >> 4;
+//    if(semi_page >= 0xC08)
+//    {
+//        /* Memory map for card io switches */
+//        if(apple->cards[semi_page - 0xC08].callback) 
+//        {
+//            return apple->cards[semi_page - 0xC08].callback(apple->cards[semi_page - 0xC08].ctx, addr);
+//        }
+//    }
+//
+//    if(addr == 0xc010)
+//    {
+//        cpu->memory[0xC000] &= 0x7F;
+//    }
+    return _io_write_callback(cpu, ctx, addr, 0xFF);
 }
 
 /* Used for read-only data */

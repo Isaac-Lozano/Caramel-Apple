@@ -109,10 +109,7 @@ uint8_t language_io_switch(void *ctx, int addr)
     return 0;
 }
 
-void language_init(LanguageCard *card, AppleII *apple, uint8_t *rom)
+void language_init(LanguageCard *card, AppleII *apple)
 {
-    memcpy(card->high_bank, rom + 0x1000, 0x2000);
-//    memcpy(card->low_banks[0], rom, 0x1000);
-//    memcpy(card->low_banks[1], rom, 0x1000);
     card->apple = apple;
 }

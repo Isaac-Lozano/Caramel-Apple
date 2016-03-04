@@ -16,6 +16,6 @@ typedef struct _language_card
 } LanguageCard;
 
 uint8_t language_io_switch(void *ctx, int addr);
-void language_init(LanguageCard *card, AppleII *apple, uint8_t *rom);
+void language_init(LanguageCard *card, AppleII *apple);
 
 #endif /* __LANGUAGE_H__ */

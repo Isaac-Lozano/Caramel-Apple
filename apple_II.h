@@ -16,7 +16,7 @@
 
 typedef struct _apple_II AppleII;
 
-typedef uint8_t (*AppleII_RefFunc)(void *ctx, int address);
+typedef uint8_t (*AppleII_RefFunc)(void *ctx, int address, uint8_t val);
 
 typedef struct _peripheral_card
 {

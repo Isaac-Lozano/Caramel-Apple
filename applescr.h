@@ -12,6 +12,7 @@ typedef struct _apple_scr
 {
     SDL_Window *win;
     SDL_Renderer *ren;
+    SDL_Texture *vbuf;
 
     /* Text mode primary and secondary */
     SDL_Surface *textp;
@@ -30,6 +31,8 @@ typedef struct _apple_scr
 #define APPLE_SCR_MODE_MIXED     0x02
 #define APPLE_SCR_MODE_SECONDARY 0x04
 #define APPLE_SCR_MODE_HIGH_RES  0x08
+
+    int resize;
 
     uint8_t *text_buffer;
     uint8_t *graphics_buffer;

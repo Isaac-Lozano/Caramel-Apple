@@ -307,7 +307,7 @@ void _setup_sector(AppleDrive *drive)
     drive->index = drive->sect_buf;
 }
 
-uint8_t diskII_reference(void *vdisk, int address)
+uint8_t diskII_reference(void *vdisk, int address, uint8_t val)
 {
     AppleDiskII *disk = (AppleDiskII *) vdisk;
 
@@ -349,6 +349,11 @@ uint8_t diskII_reference(void *vdisk, int address)
 
         /* Q switches */
         case 0x0C: /* Data shift register */
+            if(disk->drives[disk->drive_num].image == NULL)
+            {
+                return 0xFF;
+            }
+
             if(disk->mode == DISK_II_MODE_WRITE)
             {
                 printf("Trying to write 0x%02X to disk %d\n", disk->write_reg, disk->drive_num);
@@ -377,7 +382,6 @@ uint8_t diskII_reference(void *vdisk, int address)
 
         case 0x0D: /* Load data registar */
             {
-                uint8_t val = disk->parent->cpu.memory[address];
                 printf("loading 0x%02X to data register\n", val);
                 disk->write_reg = val;
                 break;

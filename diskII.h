@@ -44,7 +44,7 @@ typedef struct _apple_disk_II
     int write_prot;
 } AppleDiskII;
 
-uint8_t diskII_reference(void *vdisk, int address);
+uint8_t diskII_reference(void *vdisk, int address, uint8_t val);
 uint8_t diskII_prom(CPU_6502 *cpu, void *ctx, int addr);
 int diskII_init(AppleDiskII *disk, AppleII *parent, FILE *d1, FILE *d2);
 
