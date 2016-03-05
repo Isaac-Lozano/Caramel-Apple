@@ -10,4 +10,5 @@ The usage is:
 
 # Controls
 F2 - Reset CPU
+
 F4 - Switch disk (Very hacky)
